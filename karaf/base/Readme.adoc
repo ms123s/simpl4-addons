@@ -8,7 +8,11 @@
 
 In target are now two files
 
-simpl4-addons-1.0.tar.gz
+[source,bash]
+----
+ls target
+----
+simpl4-addons-1.0.tar.gz +
 simpl4-addons-1.0.zip
 
 you can unpack one from the files and start the Karaf container with  following commands
