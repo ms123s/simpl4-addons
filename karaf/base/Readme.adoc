@@ -17,7 +17,6 @@ simpl4-addons-1.0.zip
 
 you can unpack one from the files and start the Karaf container with  following commands
 
-cd 
 [source,bash]
 ----
 cd target
