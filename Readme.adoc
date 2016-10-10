@@ -1,0 +1,385 @@
+:linkattrs:
+:source-highlighter: rouge
+
+
+== Big(Fast) Data , Part one
+
+This is part one  of a series of articles on "Big Data" in an OSGI environment.
+
+All components are designed as link:https://karaf.apache.org[Apache Karaf, window="_blank"]  features. +
+The karaf container created in this article is the basis for everything else. +
+This should not be a theoretical consideration. +
+All things are supposed to be available as turnkey software components.
+
+The first part starts with Karaf( the basis ) and link:https://flink.apache.org[Apache Flink, window="_blank"].
+
+
+=== Creating an link:https://karaf.apache.org[Apache Karaf, window="_blank"]  container with a new , extra feature, link:https://flink.apache.org[Apache Flink, window="_blank"]
+
+The container should run completely without a internet connection. +
+Means all required resources must be included. +
+No resources should be obtained with maven at runtime. +
+
+On link:https://github.com/ms123s/simpl4-addons[github,window="_blank"]  is a repository with all the things described here. +
+Except java 1.8, no additionals are needed, everything is included.
+
+[NOTE]
+A common thing, in every directory where there is something to do,  is a *build.sh* command provided. +
+This command does all the necessary things, required in the directory.
+
+==== What is link:https://karaf.apache.org[apache karaf, window="_blank"]?
+
+.apache karaf is a osgi container and more.
+image::web/images/karaf_architecture.png[width=50%]
+
+{sp} +
+
+==== What is link:https://flink.apache.org[Apache Flink, window="_blank"]? 
+
+.apache flink is a streaming dataflow engine that provides data distribution.
+image::web/images/flink-stack-frontpage.png[width=50%]
+
+Problem: The flink jars are not prepared for OSGI. +
+The solution comes further down
+
+{sp} +
+
+==== What is a karaf feature?
+
+A karaf feature is a flexible way to provisioning osgi applications. +
+By provisioning application, it means install all modules, configuration, and transitive applications.
+
+
+Objective: link:https://flink.apache.org[Apache Flink, window="_blank"] should be available as a feature for karaf.
+
+{sp} +
+
+
+
+==== Now lets us start with creating the flink service
+
+Since apache flink does not deliver osgi jars, this has to be done itself. +
+In addition, an OSGI Activator must be written, which starts the flink components (jobmanager, taskmanager, webmonitor) +
+and also creates the link:http://akka.io/[akka, window="_blank"] system with a osgi classloader.
+
+Luckily, link:http://doc.akka.io/docs/akka/2.4.4/additional/osgi.html[Akka, window="_blank"] provides a framework for this purpose, that we will be used as a basis.
+
+This work ist done with help from the link:https://gradle.org/[gradle build system, window="_blank"].
+
+The source code is in the link:https://github.com/ms123s/simpl4-addons[repository, window="_blank"] in the directory "FlinkService"
+
+
+[NOTE] 
+A hint, the resources here are statically provided, instead of let them get by gradle
+
+The osgi bundle consists largely of the link:https://github.com/apache/flink/tree/master/flink-dist[fat jar of apache flink-dist, window="_blank"] +
+Scala and akka have been removed and are integrated as stand-alone osgi bundles into the resulting karaf feature.
+
+==== The next step is the flink feature
+
+The source code is in the link:https://github.com/ms123s/simpl4-addons[repository, window="_blank"] in the directory "karaf/features/flink"
+
+.a pom file is created with the maven "karaf-feature-archetype"
+[source,bash]
+----
+mvn archetype:generate \
+    -DarchetypeGroupId=org.apache.karaf.archetypes \
+    -DarchetypeArtifactId=karaf-feature-archetype \
+    -DarchetypeVersion=4.0.0 \
+    -DgroupId=org.simpl4.addons \
+    -DartifactId=flink \
+    -Dversion=1.0 \
+    -Dpackage=org.simpl4.addons
+----
+
+.the command above creates a pom template in the directory "flink".
+[source,xml]
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.simpl4.addons</groupId>
+    <artifactId>flink</artifactId>
+    <version>1.0</version>
+    <packaging>feature</packaging>
+
+    <name>flink-feature</name>
+    <description>flink details</description>
+
+    <dependencies> <!--1-->
+        <!-- add the artifact that should be in the feature in the dependencies set -->
+    </dependencies>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.karaf.tooling</groupId>
+                    <artifactId>karaf-maven-plugin</artifactId>
+                    <version>4.0.0</version>
+                    <extensions>true</extensions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.karaf.tooling</groupId>
+                <artifactId>karaf-maven-plugin</artifactId>
+
+                <configuration>
+                    <startLevel>50</startLevel>
+                    <aggregateFeatures>true</aggregateFeatures>
+                    <resolver>(obr)</resolver>
+                    <checkDependencyChange>true</checkDependencyChange>
+                    <failOnDependencyChange>false</failOnDependencyChange>
+                    <logDependencyChanges>true</logDependencyChanges>
+                    <overwriteChangedDependencies>true</overwriteChangedDependencies>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
+----
+<1> Insert here the dependencies 
+
+{sp} +
+
+As you can see, flink uses link:http://www.scala-lang.org[scala, window="_blank"] and link:http://akka.io/[akka, window="_blank"]. +
+Some transitive dependencies must be excluded.
+
+.This is now the finished pom with all dependencies.
+[source,xml]
+----
+<?xml version="1.0" encoding="utf-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.simpl4.addons</groupId>
+  <artifactId>flink-feature</artifactId>
+  <version>1.0.0</version>
+  <packaging>feature</packaging>
+  <name>flink-feature</name>
+  <description></description>
+
+  <dependencies>
+    <dependency> <!--1-->
+      <groupId>org.simpl4.addons</groupId>
+      <artifactId>FlinkService</artifactId>
+      <version>1.0.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.scala-lang</groupId>
+      <artifactId>scala-library</artifactId>
+      <version>2.10.5</version>
+    </dependency>
+    <dependency>
+      <groupId>com.typesafe.akka</groupId>
+      <artifactId>akka-actor_2.10</artifactId>
+      <version>2.3.7</version>
+    </dependency>
+    <dependency>
+      <groupId>com.typesafe.akka</groupId>
+      <artifactId>akka-osgi_2.10</artifactId>
+      <version>2.3.7</version>
+      <exclusions> <!--2-->
+        <exclusion>
+          <groupId>org.osgi</groupId>
+          <artifactId>org.osgi.core</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.osgi</groupId>
+          <artifactId>org.osgi.compendium</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>com.typesafe.akka</groupId>
+      <artifactId>akka-kernel_2.10</artifactId>
+      <version>2.3.7</version>
+    </dependency>
+    <dependency>
+      <groupId>com.typesafe.akka</groupId>
+      <artifactId>akka-remote_2.10</artifactId>
+      <version>2.3.7</version>
+    </dependency>
+    <dependency>
+      <groupId>com.typesafe.akka</groupId>
+      <artifactId>akka-slf4j_2.10</artifactId>
+      <version>2.3.7</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-simple</artifactId>
+      <version>1.6.0</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.karaf.tooling</groupId>
+          <artifactId>karaf-maven-plugin</artifactId>
+          <version>4.0.0</version>
+          <extensions>true</extensions>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.karaf.tooling</groupId>
+        <artifactId>karaf-maven-plugin</artifactId>
+        <configuration>
+          <startLevel>50</startLevel>
+          <aggregateFeatures>true</aggregateFeatures>
+          <resolver></resolver> <!--3-->
+          <checkDependencyChange>true</checkDependencyChange>
+          <failOnDependencyChange>false</failOnDependencyChange>
+          <logDependencyChanges>true</logDependencyChanges>
+          <overwriteChangedDependencies>true</overwriteChangedDependencies>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
+----
+<1> This our previosly create flink service.
+<2> exclude the osgi core and the osgi compendium bundle,these are already included in the core.
+<3> this must be empty
+
+.now we create the flink-feature and put it in the local maven repository
+[source,bash]
+----
+mvn install
+----
+
+{sp} +
+
+==== The next step is to create the karaf container with maven
+
+The source code is in the link:https://github.com/ms123s/simpl4-addons[repository, window="_blank"] in the directory "karaf/base"
+
+
+.this pom is from the karaf distribution with some changes and our flink-feature
+[source,xml]
+----
+<?xml version="1.0" encoding="utf-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.simpl4</groupId>
+  <artifactId>simpl4-addons</artifactId>
+  <version>1.0</version>
+  <packaging>karaf-assembly</packaging>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.karaf.features</groupId>
+      <artifactId>framework</artifactId>
+      <version>4.0.7</version>
+      <type>kar</type>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.karaf.features</groupId>
+      <artifactId>standard</artifactId>
+      <classifier>features</classifier>
+      <version>4.0.7</version>
+      <type>xml</type>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.karaf.features</groupId>
+      <artifactId>enterprise</artifactId>
+      <classifier>features</classifier>
+      <version>4.0.7</version>
+      <type>xml</type>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency> <!--1-->
+      <groupId>org.simpl4.addons</groupId>
+      <artifactId>flink-feature</artifactId>
+      <classifier>features</classifier>
+      <version>1.0.0</version>
+      <type>xml</type>
+      <scope>runtime</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <!-- if you want to include resources in the distribution -->
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>false</filtering>
+        <includes>
+          <include>**/*</include>
+        </includes>
+      </resource>
+      <resource>
+        <directory>src/main/filtered-resources</directory>
+        <filtering>true</filtering>
+        <includes>
+          <include>**/*</include>
+        </includes>
+      </resource>
+    </resources>
+    <plugins>
+      <!-- if you want to include resources in the distribution -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>2.6</version>
+        <executions>
+          <execution>
+            <id>process-resources</id>
+            <goals>
+              <goal>resources</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.karaf.tooling</groupId>
+        <artifactId>karaf-maven-plugin</artifactId>
+        <version>4.0.7</version>
+        <extensions>true</extensions>
+        <configuration>
+          <bootFeatures> <!--2-->
+            <feature>wrap</feature>
+            <feature>flink-feature</feature> <!--3-->
+            <feature>aries-blueprint</feature>
+            <feature>shell</feature>
+            <feature>shell-compat</feature>
+            <feature>feature</feature>
+            <feature>jaas</feature>
+            <feature>ssh</feature>
+            <feature>management</feature>
+            <feature>framework</feature>
+            <feature>bundle</feature>
+            <feature>config</feature>
+            <feature>deployer</feature>
+            <feature>diagnostic</feature>
+            <feature>feature</feature>
+            <feature>instance</feature>
+            <feature>kar</feature>
+            <feature>log</feature>
+            <feature>package</feature>
+            <feature>service</feature>
+            <feature>system</feature>
+          </bootFeatures>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
+----
+
+<1> This our flink feature , it comes from the local maven repositiory, see above.
+<2> This are all the features contained in the original karaf distribution.
+<3> plus the flink feature
+
+.after executing the following command, in the "karaf/base/target" directory are the resulting tar/zip files, this is the ready do use karaf container with the flink feature.
+[source,bash]
+----
+mvn clean install
+----
