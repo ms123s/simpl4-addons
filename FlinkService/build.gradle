@@ -34,11 +34,8 @@ configurations {
 dependencies {
 	bnd files("lib/biz.aQute.bnd-3.0.0.jar")
 	compile files("lib/biz.aQute.bnd-3.0.0.jar")
-	compile files("lib/slf4j-api-1.6.1.jar")
 	compile files("lib/akka-osgi_2.10-2.3.7.jar")
 	compile files("lib/flink-dist_2.10-1.1.2.jar")
-  compile files("lib/org.apache.felix.scr.annotations-1.9.8.jar")
-
 }
 
 ant.taskdef( resource: 'aQute/bnd/ant/taskdef.properties', classpath: configurations.bnd.asPath)
