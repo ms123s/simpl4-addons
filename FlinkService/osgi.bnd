@@ -1,0 +1,14 @@
+version=1.0.0
+Export-Package org.simpl4*
+Private-Package !org.slf4j*,!scala*, !akka*, !com.typesafe*, !org.osgi*, !com.google*, !ch.epfl.lamp*, !aQute*, !biz*, *
+Import-Package akka*;version="2.3.7", scala.tools*;resolution:=optional,scala.quasiquotes;resolution:=optional, scala.reflect*;resolution:=optional;version="2.10.5",scala*;version="2.10.5",*;resolution:=optional
+Bundle-Version:${version}
+Bundle-Vendor: simpl4
+Bundle-Description: Flink Service
+Bundle-ManifestVersion: 2
+Bundle-Name: FlinkService Bundle
+Bundle-SymbolicName:org.simpl4.addons.flink
+Bundle-Activator: org.simpl4.addons.flink.Activator
+Bundle-ClassPath: .
+Service-Component: *
+-metatype: *
