@@ -24,3 +24,8 @@ tar xfz simpl4-addons-1.0.tar.gz
 cd simpl4-addons-1.0
 bin/karaf
 ----
+
+
+on localhost:8082 is the WebMonitor listening
+
+In ../../FlinkRemoteTest/quickstart is a small test 
