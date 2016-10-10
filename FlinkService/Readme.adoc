@@ -1,0 +1,9 @@
+:linkattrs:
+:source-highlighter: rouge
+
+[source,bash]
+----
+./build.sh
+----
+
+that's all, the resulting bundle "FlinkService-1.0.0.jar" is now in the local maven repository.

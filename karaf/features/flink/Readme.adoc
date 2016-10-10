@@ -1,0 +1,9 @@
+:linkattrs:
+:source-highlighter: rouge
+
+[source,bash]
+----
+./build.sh
+----
+
+that's all, the resulting feature  "flink-feature-1.0.0-features.xml"  is now in the local maven repository.
