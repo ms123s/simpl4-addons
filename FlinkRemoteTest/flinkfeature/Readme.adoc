@@ -3,8 +3,10 @@
 
 [source,bash]
 ----
-./run.sh
+./build.sh
 ----
 
-
-then, select the third point 
+[source,bash]
+----
+./run.sh
+----

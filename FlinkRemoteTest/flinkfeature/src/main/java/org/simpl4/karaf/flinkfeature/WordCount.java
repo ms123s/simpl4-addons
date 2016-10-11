@@ -1,4 +1,4 @@
-package org.myorg.quickstart;
+package org.simpl4.karaf.flinkfeature;
 
 /**
  * Licensed to the Apache Software Foundation (ASF) under one
