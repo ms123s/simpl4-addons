@@ -5,37 +5,29 @@ import java.io.File;
 import org.apache.zookeeper.server.ServerConfig;
 import org.apache.zookeeper.server.ZooKeeperServerMain;
 import org.osgi.framework.BundleContext;
-//import org.osgi.framework.BundleActivator;
-//import aQute.bnd.annotation.component.*;
-//import aQute.bnd.annotation.metatype.*;
-import org.osgi.service.component.annotations.Activate;
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.framework.BundleActivator;
 
+public class ZookeeperServiceImpl extends ZooKeeperServerMain implements BundleActivator, ZookeeperService {
 
-@Component(name = "org.simpl4.addons.zookeeper")
-public class ZookeeperServiceImpl extends ZooKeeperServerMain implements ZookeeperService{
-	
 	private Thread thread;
 	private ServerConfig config;
 
-	@Activate
-	void activate(BundleContext context) {
-		File dir = context.getDataFile("zookeeper");
+	public void start(BundleContext context) {
+		System.out.println("ZookeeperService activate");
 		config = new ServerConfig();
-		config.parse(new String[] { "6789", dir.getAbsolutePath() });
+		config.parse(new String[] { "2181", new File("data/zookeeper").getAbsolutePath() });
 		thread = new Thread(this::zk, "org.simpl4.addons.zookeeper");
 		thread.start();
 	}
 
-	@Deactivate
-	void deactivate() {
+	public void stop(BundleContext context) {
 		shutdown();
 		thread.interrupt();
 	}
-	
+
 	public void zk() {
 		try {
+			System.out.println("ZookeeperService starting");
 			runFromConfig(config);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -43,3 +35,4 @@ public class ZookeeperServiceImpl extends ZooKeeperServerMain implements Zookeep
 		System.out.println("ZookeeperService exiting");
 	}
 }
+

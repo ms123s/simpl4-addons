@@ -7,6 +7,7 @@ Bundle-Description: Zookeeper Service
 Bundle-ManifestVersion: 2
 Bundle-Name: ZookeeperService Bundle
 Bundle-SymbolicName:org.simpl4.addons.zookeeper
+Bundle-Activator: org.simpl4.addons.zookeeper.ZookeeperServiceImpl
 Bundle-ClassPath: .
 Service-Component: *
 -metatype: *
