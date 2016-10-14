@@ -37,6 +37,14 @@
       <type>xml</type>
       <scope>runtime</scope>
     </dependency>
+    <dependency> <!--2-->
+      <groupId>org.simpl4.addons</groupId>
+      <artifactId>zookeeper-feature</artifactId>
+      <classifier>features</classifier>
+      <version>1.0.0</version>
+      <type>xml</type>
+      <scope>runtime</scope>
+    </dependency>
   </dependencies>
 
   <build>
@@ -78,9 +86,10 @@
         <version>4.0.7</version>
         <extensions>true</extensions>
         <configuration>
-          <bootFeatures> <!--2-->
+          <bootFeatures> <!--3-->
             <feature>wrap</feature>
-            <feature>flink-feature</feature> <!--3-->
+            <feature>flink-feature</feature> <!--4-->
+            <feature>zookeeper-feature</feature> <!--5-->
             <feature>aries-blueprint</feature>
             <feature>shell</feature>
             <feature>shell-compat</feature>
