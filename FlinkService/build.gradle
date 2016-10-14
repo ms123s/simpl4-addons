@@ -32,10 +32,10 @@ configurations {
 	bnd
 }
 dependencies {
-	bnd files("lib/biz.aQute.bnd-3.0.0.jar")
-	compile files("lib/biz.aQute.bnd-3.0.0.jar")
+	bnd files("lib/biz.aQute.bnd-3.3.0.jar")
+	compile files("lib/biz.aQute.bnd-3.3.0.jar")
 	compile files("lib/akka-osgi_2.10-2.3.7.jar")
-	compile files("lib/flink-dist_2.10-1.1.2.jar")
+	compile files("lib/flink-dist_2.10-1.1.3.jar")
 }
 
 ant.taskdef( resource: 'aQute/bnd/ant/taskdef.properties', classpath: configurations.bnd.asPath)
