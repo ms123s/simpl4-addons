@@ -1,0 +1,12 @@
+version=1.0.0
+Export-Package org.simpl4.addons.zookeeper
+Import-Package *;resolution:=optional
+Bundle-Version:${version}
+Bundle-Vendor: simpl4
+Bundle-Description: Zookeeper Service
+Bundle-ManifestVersion: 2
+Bundle-Name: ZookeeperService Bundle
+Bundle-SymbolicName:org.simpl4.addons.zookeeper
+Bundle-ClassPath: .
+Service-Component: *
+-metatype: *
