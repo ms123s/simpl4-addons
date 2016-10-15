@@ -1,0 +1,12 @@
+:linkattrs:
+:source-highlighter: rouge
+
+[source,bash]
+----
+./build.sh
+----
+
+[source,bash]
+----
+./run.sh
+----
