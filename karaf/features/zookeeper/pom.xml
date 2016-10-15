@@ -7,7 +7,7 @@
   <packaging>feature</packaging>
   <name>zookeeper-feature</name>
   <description>zookeeper details</description>
-P
+
   <dependencies>
     <dependency>
       <groupId>org.simpl4.addons</groupId>
