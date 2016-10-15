@@ -40,9 +40,6 @@ dependencies {
 	compile files("lib/zkclient-0.9.jar")
 	compile files("lib/org.apache.servicemix.bundles.kafka_2.10-0.10.0.1_1.jar")
 	compile files("lib/org.apache.servicemix.bundles.kafka-clients-0.10.0.1_1.jar")
-
-//	compile files("/opt/dev/simpl4-addons/kafka/kafka/core/build/libs/kafka_2.10-0.10.1.0-SNAPSHOT.jar")
-//	compile files("/opt/dev/simpl4-addons/kafka/kafka/clients/build/libs/kafka-clients-0.10.1.0-SNAPSHOT.jar")
 }
 
 ant.taskdef( resource: 'aQute/bnd/ant/taskdef.properties', classpath: configurations.bnd.asPath)
