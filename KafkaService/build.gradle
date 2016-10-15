@@ -34,7 +34,15 @@ configurations {
 dependencies {
 	bnd files("lib/biz.aQute.bnd-3.3.0.jar")
 	compile files("lib/biz.aQute.bnd-3.3.0.jar")
-	compile files("lib/org.apache.servicemix.bundles.kafka_2.10-0.8.1_1.jar")
+	compile files("lib/scala-library-2.10.6.jar")
+	compile files("lib/metrics-core-2.2.0.jar")
+	compile files("lib/log4j-1.2.17.jar")
+	compile files("lib/zkclient-0.9.jar")
+	compile files("lib/org.apache.servicemix.bundles.kafka_2.10-0.10.0.1_1.jar")
+	compile files("lib/org.apache.servicemix.bundles.kafka-clients-0.10.0.1_1.jar")
+
+//	compile files("/opt/dev/simpl4-addons/kafka/kafka/core/build/libs/kafka_2.10-0.10.1.0-SNAPSHOT.jar")
+//	compile files("/opt/dev/simpl4-addons/kafka/kafka/clients/build/libs/kafka-clients-0.10.1.0-SNAPSHOT.jar")
 }
 
 ant.taskdef( resource: 'aQute/bnd/ant/taskdef.properties', classpath: configurations.bnd.asPath)
@@ -63,9 +71,6 @@ task makeBundle (type:Task){
 			output:"build/libs/${name}-${version}.jar",
 			files:"osgi.bnd"
 		)
-		ant.zip( destfile:"build/libs/${name}-${version}.jar", update:"true"){
-			fileset( dir:"src/main/resources")
-		}
 	}
 }
 compileJava.dependsOn projectClean
