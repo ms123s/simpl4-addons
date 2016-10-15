@@ -1,0 +1,13 @@
+version=1.0.0
+Export-Package org.simpl4.addons.kafka
+Import-Package *;resolution:=optional
+Bundle-Version:${version}
+Bundle-Vendor: simpl4
+Bundle-Description: Kafka Service
+Bundle-ManifestVersion: 2
+Bundle-Name: ZookeeperService Bundle
+Bundle-SymbolicName:org.simpl4.addons.kafka
+Bundle-Activator: org.simpl4.addons.kafka.KafkaService
+Bundle-ClassPath: .
+Service-Component: *
+-metatype: *

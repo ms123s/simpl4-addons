@@ -1,0 +1,73 @@
+apply plugin: 'java'
+apply plugin: 'scala'
+apply plugin: 'maven'
+apply plugin: 'maven-publish'
+
+defaultTasks "publishToMavenLocal"
+
+version='1.0.0'
+def name='KafkaService'
+def group='org.simpl4.addons'
+
+jar.enabled=false
+test.enabled=false
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+						groupId "${group}"
+            artifactId "${name}"
+            version "${version}"
+            from components.java
+        }
+    }
+}
+
+
+tasks.withType(ScalaCompile) {
+    scalaClasspath = fileTree('lib')
+}
+
+configurations {
+	bnd
+}
+dependencies {
+	bnd files("lib/biz.aQute.bnd-3.3.0.jar")
+	compile files("lib/biz.aQute.bnd-3.3.0.jar")
+	compile files("lib/org.apache.servicemix.bundles.kafka_2.10-0.8.1_1.jar")
+}
+
+ant.taskdef( resource: 'aQute/bnd/ant/taskdef.properties', classpath: configurations.bnd.asPath)
+
+task projectClean (type:Task) {
+	doLast{
+		ant.delete ( dir:"build/libs/bundles" );
+		ant.mkdir  ( dir:"build/libs/bundles" );
+		ant.delete ( dir:"tmp" );
+		ant.mkdir  ( dir:"tmp" );
+	}
+}
+
+task makeBundle (type:Task){
+	dependsOn classes
+	doLast{
+		ant.zip( destfile:"tmp/bundle.zip",
+			basedir:"build/classes/main",
+			includes:"**/*.class,OSGI-INF/**",
+			excludes:"test/**"
+		)
+		ant.bnd(
+			failok:true,
+			exceptions:true,
+			classpath : "tmp/bundle.zip:${configurations.compile.asPath}",
+			output:"build/libs/${name}-${version}.jar",
+			files:"osgi.bnd"
+		)
+		ant.zip( destfile:"build/libs/${name}-${version}.jar", update:"true"){
+			fileset( dir:"src/main/resources")
+		}
+	}
+}
+compileJava.dependsOn projectClean
+build.dependsOn makeBundle
+publishToMavenLocal.dependsOn build
