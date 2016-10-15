@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.simpl4.addons</groupId>
+  <artifactId>kafka</artifactId>
+  <version>1.0</version>
+  <packaging>feature</packaging>
+  <name>kafka-feature</name>
+  <description>kafka details</description>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.simpl4.addons</groupId>
+      <artifactId>KafkaService</artifactId>
+      <version>1.0.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.servicemix.bundles</groupId>
+      <artifactId>org.apache.servicemix.bundles.kafka_2.10</artifactId>
+      <version>0.10.0.1_1</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.kafka</groupId>
+          <artifactId>kafka-clients</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.servicemix.bundles</groupId>
+      <artifactId>org.apache.servicemix.bundles.kafka-clients</artifactId>
+      <version>0.10.0.1_1</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.karaf.tooling</groupId>
+          <artifactId>karaf-maven-plugin</artifactId>
+          <version>4.0.0</version>
+          <extensions>true</extensions>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.karaf.tooling</groupId>
+        <artifactId>karaf-maven-plugin</artifactId>
+        <configuration>
+          <startLevel>50</startLevel>
+          <aggregateFeatures>true</aggregateFeatures>
+          <checkDependencyChange>true</checkDependencyChange>
+          <failOnDependencyChange>false</failOnDependencyChange>
+          <logDependencyChanges>true</logDependencyChanges>
+          <overwriteChangedDependencies>true</overwriteChangedDependencies>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
