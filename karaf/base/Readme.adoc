@@ -28,4 +28,4 @@ bin/karaf
 
 on *localhost:8082* is the WebMonitor listening
 
-In *../../FlinkRemoteTest/quickstart* is a small test 
+In *../../Examples/flink-wordcount* is a small example 
