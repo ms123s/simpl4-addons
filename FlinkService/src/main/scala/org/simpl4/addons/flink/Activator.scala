@@ -15,6 +15,8 @@ import org.apache.flink.runtime.webmonitor.{WebMonitor, WebMonitorUtils}
 import org.apache.flink.configuration.{ConfigConstants, Configuration, GlobalConfiguration}
 import org.apache.flink.runtime.taskmanager.TaskManager
 import org.apache.flink.runtime.clusterframework.types.ResourceID
+import java.util.Properties;
+import java.io.FileReader;
 
 class Activator extends ActorSystemActivator {
 
@@ -32,17 +34,23 @@ class Activator extends ActorSystemActivator {
     println("Flink service registered");
     startWeb(configuration, system);
     val taskManagerListeningAddress = "localhost";
-		startTask(configuration, system, taskManagerListeningAddress);
+    startTask(configuration, system, taskManagerListeningAddress);
     println("Flink WebMonitor startet");
   }
 
   override def start(context: BundleContext): Unit = {
+		val properties = new Properties();
+		properties.load( new FileReader( "etc/flink.properties" ));
     val configuration = new Configuration();
-    val ipcaddress = "localhost";
-    val ipcport = 6322;
-    val webport = 8082;
-    val numTaskSlots = 3;
-    val parallelDefault = 2;
+		//configuration.addAllToProperties(properties);
+    val ipcaddress = properties.getProperty(ConfigConstants.JOB_MANAGER_IPC_ADDRESS_KEY, "localhost");
+    val ipcport = properties.getProperty(ConfigConstants.JOB_MANAGER_IPC_PORT_KEY, "6322").toInt;
+    val webport = properties.getProperty(ConfigConstants.JOB_MANAGER_WEB_PORT_KEY, "8082").toInt;
+    val numTaskSlots = properties.getProperty(ConfigConstants.TASK_MANAGER_NUM_TASK_SLOTS, "3").toInt;
+    val parallelDefault = properties.getProperty(ConfigConstants.DEFAULT_PARALLELISM_KEY, "2").toInt;
+    println("FlinkService.ipc:"+ipcaddress+"/"+ipcport+"/"+webport);
+    println("FlinkService.tasks:"+numTaskSlots+"/"+parallelDefault);
+
     configuration.setInteger(ConfigConstants.JOB_MANAGER_WEB_PORT_KEY, webport);
     configuration.setString(ConfigConstants.JOB_MANAGER_IPC_ADDRESS_KEY, ipcaddress);
     configuration.setInteger(ConfigConstants.JOB_MANAGER_IPC_PORT_KEY, ipcport)
@@ -72,15 +80,15 @@ class Activator extends ActorSystemActivator {
     }
   }
   private def startTask(configuration: Configuration, system: ActorSystem, listeningAddress:String) {
-		val taskManagerActor = TaskManager.startTaskManagerComponentsAndActor(
-			configuration,
-			ResourceID.generate(),
-			system,
-			listeningAddress,
-			Some(TaskManager.TASK_MANAGER_NAME),
-			None,
-			localTaskManagerCommunication = true,
-			classOf[TaskManager])
+     val taskManagerActor = TaskManager.startTaskManagerComponentsAndActor(
+       configuration,
+       ResourceID.generate(),
+       system,
+       listeningAddress,
+       Some(TaskManager.TASK_MANAGER_NAME),
+       None,
+       localTaskManagerCommunication = true,
+       classOf[TaskManager])
   }
   override def getActorSystemName(context: BundleContext): String = "flink"
 }
