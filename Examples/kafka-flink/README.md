@@ -11,10 +11,10 @@ This work is based on http://data-artisans.com/kafka-flink-a-practical-how-to/
 wget http://apache.lauf-forum.at/kafka/0.10.0.1/kafka_2.10-0.10.0.1.tgz
 # unpack
 tar xf kafka_2.10-0.10.0.1
-cd kafka_2.10-0.10.0.1 #this is referenced as *kafka directory* in the later description
+cd kafka_2.10-0.10.0.1 #this directory is referenced as "kafka directory" in the later description
 
 
-# Go back in this directory (Examples/kafka-flink)
+# Go back in this directory (Examples/kafka-flink #referenced as  "this directory")
 # Compile the examples
 ./build.sh
 

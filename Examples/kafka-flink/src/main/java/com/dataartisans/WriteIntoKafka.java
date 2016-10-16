@@ -23,12 +23,10 @@ import org.apache.flink.api.java.utils.ParameterTool;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.source.SourceFunction;
-//import org.apache.flink.streaming.connectors.kafka.KafkaSink;
 import org.apache.flink.streaming.util.serialization.DeserializationSchema;
 import org.apache.flink.streaming.util.serialization.SerializationSchema;
 import org.apache.flink.streaming.util.serialization.SimpleStringSchema;
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer09;
-
 
 /**
  * Simple example for writing data into Kafka.
@@ -62,10 +60,11 @@ public class WriteIntoKafka {
 		private static final long serialVersionUID = 2174904787118597072L;
 		boolean running = true;
 		long i = 0;
+
 		@Override
 		public void run(SourceContext<String> ctx) throws Exception {
-			while(running) {
-				ctx.collect("element-"+ (i++));
+			while (running) {
+				ctx.collect("element-" + (i++));
 				Thread.sleep(10);
 			}
 		}
@@ -75,7 +74,6 @@ public class WriteIntoKafka {
 			running = false;
 		}
 	}
-
 
 	public static class SimpleStringSchema implements DeserializationSchema<String>, SerializationSchema<String> {
 		private static final long serialVersionUID = 1L;
@@ -100,5 +98,4 @@ public class WriteIntoKafka {
 		}
 	}
 }
-
 

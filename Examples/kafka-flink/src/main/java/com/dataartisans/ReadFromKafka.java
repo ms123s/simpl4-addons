@@ -36,7 +36,7 @@ import org.apache.flink.streaming.util.serialization.SimpleStringSchema;
  * You can pass these required parameters using "--bootstrap.servers host:port,host1:port1 --zookeeper.connect host:port --topic testTopic"
  *
  * This is a valid input example:
- * 		--topic test --bootstrap.servers localhost:9092 --zookeeper.connect localhost:2181 --group.id myGroup
+ * 		--topic test --bootstrap.servers localhost:9092 --zookeeper.connect localhost:2181/kafka --group.id myGroup
  *
  *
  */
@@ -66,3 +66,4 @@ public class ReadFromKafka {
 		env.execute();
 	}
 }
+
