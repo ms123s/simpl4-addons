@@ -1,6 +1,6 @@
 version=1.0.0
 Export-Package org.simpl4*
-Private-Package org.apache.flink* , scopt, grizzled*, org.apache.commons*, com.fasterxml*, com.esotericsoftware*,com.codahale*, io.netty*,org.jboss*,org.objenesis*,jauter , javassist*, org.apache.avro*, org.codehaus.jackson*, com.thoughtworks*, com.google*
+Private-Package org.apache.flink* , scopt, grizzled*, org.apache.commons*, com.fasterxml*, com.esotericsoftware*,com.codahale*, io.netty*,org.jboss*,org.objenesis*,jauter , javassist*, org.apache.avro*, org.codehaus.jackson*, com.thoughtworks*, com.google*, org.mortbay*
 Import-Package akka*;version="2.3.7", scala.tools*;resolution:=optional,scala.quasiquotes;resolution:=optional, scala.reflect*;resolution:=optional;version="2.10.5",scala*;version="2.10.5", org.slf4j*, com.typesafe*, javax*;resolution:=optional,org.osgi*;resolution:=optional, org.apache.zookeeper*;resolution:=optional
 Bundle-Version:${version}
 Bundle-Vendor: simpl4
