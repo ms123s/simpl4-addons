@@ -53,6 +53,14 @@
       <type>xml</type>
       <scope>runtime</scope>
     </dependency>
+    <dependency> <!--3-->
+      <groupId>org.simpl4.addons</groupId>
+      <artifactId>orientdb-feature</artifactId>
+      <classifier>features</classifier>
+      <version>1.0.0</version>
+      <type>xml</type>
+      <scope>runtime</scope>
+    </dependency>
   </dependencies>
 
   <build>
@@ -99,6 +107,7 @@
             <feature>flink-feature</feature> <!--5-->
             <feature>zookeeper-feature</feature> <!--6-->
             <feature>kafka-feature</feature> <!--7-->
+            <feature>orientdb-feature</feature> <!--7-->
             <feature>aries-blueprint</feature>
             <feature>shell</feature>
             <feature>shell-compat</feature>
